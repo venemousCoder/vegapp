@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const PassportLocalMongoose = require('passport-local-mongoose');
-const UserScheme = mongoose.Schema(
+const AccountScheme = mongoose.Schema(
     {
         email: {
             type: String,
@@ -14,7 +14,7 @@ const UserScheme = mongoose.Schema(
         role: {
             type: String,
             required: true,
-            enum: ['user', 'admin'],
+            enum: ['user', 'admin', 'moderator'],
             default: 'user'
         },
 
@@ -24,8 +24,15 @@ const UserScheme = mongoose.Schema(
     }
 );
 
-UserScheme.plugin(PassportLocalMongoose, {
+AccountScheme.plugin(PassportLocalMongoose, {
     usernameField: 'email'
 })
 
-module.exports = mongoose.model('User', UserScheme);
+const Account = mongoose.model('Account', AccountScheme);
+const Admin = Account.discriminator('Admin', {});
+const User = Account.discriminator('User', {});
+const Moderator = Account.discriminator('Moderator', {});
+
+// const Admin = mongoose.model('Admin')
+
+module.exports = {Admin, Account, User};

@@ -11,8 +11,9 @@ const scheme = mongoose.Schema(
       required: true,
     },
     buyer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      type: {},
+      ref: 'User',
+      required: true
     }
   },
   { timestamp: true }

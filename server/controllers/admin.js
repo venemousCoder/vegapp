@@ -1,58 +1,10 @@
 const passport = require('passport');
 const userModels = require('../models/user.models');
 const mongoose = require('mongoose');
-const jsonwebtoken = require('jsonwebtoken');
+const jwtAuth = require('../Utils/jwt')
 const app = require('../index')
 
-function generateToken(user) {
-    if (user) {
-        let signedToken = jsonwebtoken.sign(
-            {
-                data: user._id,
-                exp: new Date().setDate(new Date().getDate() + 1)
-            },
-            "1234567890"
-        );
-       
-        return signedToken;
-    }
-    return new Error('userException: user not found');
-}
 
-function verifyJwt(req, res, next) {
-    const token = req.session.token
-
-    if (token) {
-        jsonwebtoken.verify(token, '1234567890', (error, payload) => {
-            if (payload) {
-                console.log(payload)
-                userModels.Account
-                    .findById(payload.data).then(user => {
-                        if (user) {
-                            console.log('sync')
-                            return next();
-                        } else {
-
-                            return res.status(401).json({
-                                error: error,
-                                message: "No User account found."
-                            })
-                        }
-                    })
-            } else {
-                return res.status(401).json({
-                    error: error,
-                    message: "Cannot verify API token."
-                });
-            }
-        })
-    } else {
-        return res.status(401).json({
-            error: true,
-            message: "Provide Token"
-        });
-    }
-}
 
 
 function createAdmin(req, res, next) {
@@ -85,8 +37,7 @@ function createAdmin(req, res, next) {
             })};
 
             // Successfully authenticated and session created
-            const jwt = generateToken(req.user);
-            req.session.token = jwt;
+            req.session.token = jwtAuth.generateToken(req.user);
             console.log('success')
             return res.status(201).json({
                 status: "success",
@@ -126,7 +77,7 @@ function adminLogin(req, res, next) {
             });
             // Successfully authenticated and session created
             res.locals.currentUser = req.user
-            req.session.token = generateToken(req.user);
+            req.session.token = jwtAuth.generateToken(req.user);
             // console.log(req.session.token, req.user,'USER')
             if (req.user.role === 'admin') {
                 
@@ -138,7 +89,7 @@ function adminLogin(req, res, next) {
                 // return next()
             }
             console.log('success')
-            // req.session.token = generateToken(req.user.id);
+            // req.session.token = jwtAuth.generateToken(req.user.id);
             return res.status(200).json({
                 status: 'success',
                 message: 'redirect to dashboard',
@@ -203,4 +154,4 @@ function test(req, res, next) {
     return next()
 }
 
-module.exports = { createAdmin, adminLogin, test, deleteAdmin, logout, adminDashboard, verifyJwt }
+module.exports = { createAdmin, adminLogin, test, deleteAdmin, logout, adminDashboard }

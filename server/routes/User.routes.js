@@ -7,7 +7,8 @@ router.post('/create', userController.createUser);
 router.post('/auth', userController.userLogin);
 router.get('/delete', userController.deleteUser);
 router.get('/logout', userController.logout);
-router.post('/order', orderController.createOrder)
+router.post('/order', orderController.createOrder);
+router.get('cancelOrder', orderController.deleteOrder);
 router.get('/test', userController.test);
 
 

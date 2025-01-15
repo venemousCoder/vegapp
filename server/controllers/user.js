@@ -1,6 +1,7 @@
 const passport = require('passport');
 const userModels = require('../models/user.models');
 const mongoose = require('mongoose');
+const jwt = require('../Utils/jwt')
 
 
 function createUser(req, res, next) {
@@ -29,8 +30,9 @@ function createUser(req, res, next) {
                 message: "failed to create session",
                 error: err
             });
-
+            
             // Successfully authenticated and session created
+            req.session.token = jwt.generateToken(req.user);
             res.status(201).json({
                 status: "success",
                 message: " user created"
@@ -60,6 +62,7 @@ function userLogin(req, res, next) {
             });
             // Successfully authenticated and session created
             res.locals.currentUser = req.user
+            req.session.token = jwtAuth.generateToken(req.user);
             if (req.user.role === 'admin') {
                  res.status(200).json({
                     status: 'success',
@@ -80,7 +83,7 @@ function userLogin(req, res, next) {
 
 function deleteUser(req, res, next) {
     const uId = mongoose.Types.ObjectId.createFromHexString(req.query.id);
-    userModels.findByIdAndDelete(uId)
+    userModels.User.findByIdAndDelete(uId)
         .then((deletedAccount) => {
             res.status(200).json({
                 status: 'success',

@@ -10,7 +10,7 @@ let Router = require('./routes/index.routes')
 
 
 app.use(session({
-    cookie: { name: "user", secret: process.env.SECRET_KEY, expires: 60000 },
+    maxAge: 24 * 60 * 60 * 1000,
     resave: false,
     saveUninitialized: false,
     secret: process.env.SECRET_KEY

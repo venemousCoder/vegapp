@@ -2,7 +2,13 @@ const { default: mongoose } = require('mongoose');
 const Product = require('../models/products.models');
 const Cloudinary = require('../Utils/cloudinary')
 
-
+let productHandler = async (req, res) => {
+    allProducts = await Product.find();
+    res.status(200).json({
+        status: "succcess",
+        data: allProducts
+    })
+}
 function createProduct(req, res, next) {
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     let dataURI = "data:" + req.file.mimetype + ";base64," + b64;

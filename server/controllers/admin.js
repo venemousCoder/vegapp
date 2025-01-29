@@ -1,20 +1,24 @@
 const passport = require('passport');
 const userModels = require('../models/user.models');
 const mongoose = require('mongoose');
-const jwt = require('../Utils/jwt')
+const jwtAuth = require('../Utils/jwt')
+const app = require('../index')
 
 
-function createUser(req, res, next) {
-    const newUser = {
+
+
+function createAdmin(req, res, next) {
+    const newAdmin = {
         username: req.body.username,
         email: req.body.email,
+        role: 'admin'
     }
-    const User = new userModels.User(newUser);
-    userModels.User.register(User, req.body.password, (err, user) => {
+    const Admin = new userModels.Admin(newAdmin);
+    userModels.Admin.register(Admin, req.body.password, (err, user) => {
         if (err) {
             return res.status(500).json({
                 status: "fail",
-                message: " user not created  :try again",
+                message: " user not created try again",
                 error: err
             })
         }
@@ -25,25 +29,36 @@ function createUser(req, res, next) {
             })
         }
         req.login(user, function (err) {
-            if (err) return res.status(500).json({
+            if (err)
+                { return res.status(500).json({
                 status: "fail",
                 message: "failed to create session",
                 error: err
-            });
-            
+            })};
+
             // Successfully authenticated and session created
-            req.session.token = jwt.generateToken(req.user);
-            res.status(201).json({
+            req.session.token = jwtAuth.generateToken(req.user);
+            console.log('success')
+            return res.status(201).json({
                 status: "success",
-                message: " user created"
+                message: " user created",
+                user: req.user,
+                tkn: req.session.token
             })
-            return next()
         });
 
     })
 }
 
-function userLogin(req, res, next) {
+function adminDashboard(req, res, next) {
+    return res.status(200).json({
+        status: 'success',
+        message: '',
+        user: req.user,
+        redirect: ''
+    })
+}
+function adminLogin(req, res, next) {
     passport.authenticate('local', function (err, user) {
         if (!user) return res.status(403).json({
             status: "fail",
@@ -63,27 +78,31 @@ function userLogin(req, res, next) {
             // Successfully authenticated and session created
             res.locals.currentUser = req.user
             req.session.token = jwtAuth.generateToken(req.user);
+            // console.log(req.session.token, req.user,'USER')
             if (req.user.role === 'admin') {
-                 res.status(200).json({
+                
+                return res.status(200).json({
                     status: 'success',
                     message: 'authentication success',
                     redirect: '/admin/panel'
                 })
-                return next()
+                // return next()
             }
-             res.status(200).json({
+            console.log('success')
+            // req.session.token = jwtAuth.generateToken(req.user.id);
+            return res.status(200).json({
                 status: 'success',
                 message: 'redirect to dashboard',
                 redirect: '/user/panel'
             })
-            return next();
+            // return next();
         });
     })(req, res, next)
 }
 
-function deleteUser(req, res, next) {
+function deleteAdmin(req, res, next) {
     const uId = mongoose.Types.ObjectId.createFromHexString(req.query.id);
-    userModels.User.findByIdAndDelete(uId)
+    userModels.findByIdAndDelete(uId)
         .then((deletedAccount) => {
             res.status(200).json({
                 status: 'success',
@@ -102,32 +121,30 @@ function deleteUser(req, res, next) {
 
 function logout(req, res, next) {
     if (!req.isAuthenticated()) {
+        console.log('not authenticated')
         return res.status(500).json({
             status: 'fail',
             message: 'Session unset'
         })
     }
     req.logout((err) => {
+        console.log('req logout')
         if (err) {
+            console.log('logout err')
             return res.status(500).json({
                 status: 'fail',
                 message: 'Error logging out user',
                 error: err,
             })
         }
-        res.status(200).json({
+        console.log('success logout')
+        return res.status(200).json({
             status: 'success',
             message: 'successfully logged out',
             redirect: '/login'
         })
-        return next()
+        // return next()
     })
-
-
-}
-
-function makeOrder(req, res, next) {
-    
 }
 
 function test(req, res, next) {
@@ -137,4 +154,4 @@ function test(req, res, next) {
     return next()
 }
 
-module.exports = { createUser, userLogin, test, deleteUser, logout }
+module.exports = { createAdmin, adminLogin, test, deleteAdmin, logout, adminDashboard }

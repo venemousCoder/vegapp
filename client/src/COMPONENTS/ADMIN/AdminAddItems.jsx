@@ -1,5 +1,6 @@
 import { useSpring } from 'framer-motion';
 import React, { useState } from 'react';
+import Loading from '../Utils/Loading';
 
 function AdminAdd() {
     const [isLoading, setIsLoading] = useState(false)
@@ -19,7 +20,10 @@ function AdminAdd() {
         fetch("http://localhost:4000/admin/uploadProduct", {
             method: "POST", body: form,
         }).then(res => res.json()).then(data => {
-            setIsLoading(false)
+            if (data.success) {
+                setIsLoading(false)
+            }
+
         })
 
         // Handle the product addition logic here  
@@ -31,7 +35,7 @@ function AdminAdd() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <> {isLoading ? <Loading /> : <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white shadow-md rounded-lg p-8 w-96">
                 <h2 className="text-2xl text-center font-bold mb-6">Add New Product</h2>
                 <form onSubmit={handleAddProduct}>
@@ -80,7 +84,7 @@ function AdminAdd() {
                     </a>
                 </p>
             </div>
-        </div>
+        </div>}</>
     );
 }
 

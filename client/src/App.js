@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { GiThreeLeaves } from 'react-icons/gi';
 import Loading from './COMPONENTS/Utils/Loading';
 import { Route, Routes } from 'react-router';
+import AdminPanel from './COMPONENTS/ADMIN/AdminPanel';
 
 function App() {
   let { showCart } = useSelector(state => state.cartReducer)
@@ -23,7 +24,9 @@ function App() {
     <div className="App">
       <AnimatePresence>
 
-      //  <AdminAdd />
+        {/* //  <AdminAdd /> */}
+        {/*<AdminPanel />*/}
+
 
         <Header />
 

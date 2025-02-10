@@ -14,6 +14,14 @@ const scheme = mongoose.Schema(
       type: {},
       ref: 'User',
       required: true
+<<<<<<< HEAD
+=======
+    },
+    delivered: {
+      type: Boolean,
+      required: true,
+      default: false
+>>>>>>> 0bcf841 (Mark subprojects as dirty to indicate uncommitted changes)
     }
   },
   { timestamp: true }

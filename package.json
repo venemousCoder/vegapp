@@ -9,7 +9,11 @@
   },
   "repository": {
     "type": "git",
+<<<<<<< HEAD
     "url": "https://github.com/mustaphaBakoji"
+=======
+    "url": "https://github.com/venemousCoder/vegapp.git"
+>>>>>>> 0bcf841 (Mark subprojects as dirty to indicate uncommitted changes)
   },
   "author": "venemousCoder, mustaphaBakoji",
   "license": "MIT",

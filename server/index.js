@@ -18,7 +18,7 @@ app.use(
 );
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/vegDB")
+  .connect(process.env.DB_URI)
   .then(() => {
     console.log("connected to db");
   })

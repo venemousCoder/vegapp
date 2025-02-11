@@ -7,7 +7,6 @@ let app = express();
 const GlobalError = require("./Utils/Error");
 const Admin = require("./models/user.models");
 let Router = require("./routes/index.routes");
-
 app.use(
   session({
     maxAge: 24 * 60 * 60 * 1000,

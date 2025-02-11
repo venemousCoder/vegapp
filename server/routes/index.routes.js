@@ -8,5 +8,5 @@ const auth = require('../controllers/admin');
 Routes.post('/auth', auth.adminLogin)
 Routes.use('/user', userRouter);
 Routes.use('/admin', adminRouter);
-Routes.use('/')
+// Routes.use('/')
 module.exports = Routes

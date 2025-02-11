@@ -19,8 +19,6 @@ function getOrder(req, res, next) {
     });
 }
 
-<<<<<<< HEAD
-=======
 function userGetOrder(req, res, next) {
   return res.status(200).json({
     orders: req.user.order,
@@ -29,7 +27,6 @@ function userGetOrder(req, res, next) {
   });
 }
 
->>>>>>> 0bcf841 (Mark subprojects as dirty to indicate uncommitted changes)
 function createOrder(req, res, next) {
   const newOrder = {
     productName: req.body.productName,
@@ -71,9 +68,6 @@ function createOrder(req, res, next) {
     });
 }
 
-<<<<<<< HEAD
-function updatedOrder(req, res, next) {}
-=======
 function updatedOrder(req, res, next) {
   const orderId = req.orederId;
   const updateData = {
@@ -137,7 +131,6 @@ function updatedOrder(req, res, next) {
       });
   });
 }
->>>>>>> 0bcf841 (Mark subprojects as dirty to indicate uncommitted changes)
 
 function deleteOrder(req, res) {
   const uId = mongoose.Types.ObjectId.createFromHexString(req.query.id);
@@ -159,9 +152,6 @@ function deleteOrder(req, res) {
     });
 }
 
-<<<<<<< HEAD
-module.exports = { createOrder, deleteOrder, getOrder };
-=======
 module.exports = {
   createOrder,
   deleteOrder,
@@ -169,4 +159,3 @@ module.exports = {
   updatedOrder,
   userGetOrder,
 };
->>>>>>> 0bcf841 (Mark subprojects as dirty to indicate uncommitted changes)

@@ -8,7 +8,7 @@ const app = express();
 const GlobalError = require("./Utils/Error");
 const Admin = require("./models/user.models");
 const router = require("./routes/index.routes");
-
+const cors = require("cors");
 
 const store = new MongoDBstore({
   uri: process.env.DBURI,
@@ -48,6 +48,8 @@ app.use(require("cors")({ origin: "*" }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(cors({ origin: "*", methods: "GET,HEAD,PUT,PATCH,POST,DELETE" }));
 
 passport.use(Admin.Account.createStrategy());
 

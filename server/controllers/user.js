@@ -105,7 +105,7 @@ function userLogin(req, res, next) {
 }
 
 function updateUser(req, res, next) {
-  const uId = mongoose.Types.ObjectId.createFromHexString(req.body.id);
+  const uId = req.user._id;
   userModels.User.findByIdAndUpdate(uId, req.body, { new: true })
     .then((updatedAccount) => {
       res.status(200).json({
@@ -138,7 +138,7 @@ function deleteUser(req, res, next) {
       message: "Unauthorized",
     });
   }
-  const uId = mongoose.Types.ObjectId.createFromHexString(req.body.id);
+  const uId = req.use._id;
   userModels.User.findByIdAndDelete(uId)
     .then(async (deletedAccount) => {
         await order.deleteMany({ user: req.user.id });

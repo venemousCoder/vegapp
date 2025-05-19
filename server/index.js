@@ -11,7 +11,7 @@ const router = require("./routes/index.routes");
 const cors = require("cors");
 
 const store = new MongoDBstore({
-  uri: process.env.DBURI,
+  uri: process.env.DB_URI,
   collection: "sessions",
 });
 store.on("error", function (error) {

@@ -1,15 +1,31 @@
-let express = require("express");
+const express = require("express");
 require("dotenv").config();
-let passport = require("passport");
-let mongoose = require("mongoose");
-let session = require("express-session");
-let app = express();
+const passport = require("passport");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoDBstore = require("connect-mongodb-session")(session);
+const app = express();
 const GlobalError = require("./Utils/Error");
 const Admin = require("./models/user.models");
-let Router = require("./routes/index.routes");
+const router = require("./routes/index.routes");
+
+
+const store = new MongoDBstore({
+  uri: process.env.DBURI,
+  collection: "sessions",
+});
+store.on("error", function (error) {
+  throw new Error("Session store error: " + error);
+});
+
 app.use(
   session({
-    maxAge: 24 * 60 * 60 * 1000,
+    store: store,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true, // Ensures cookies are sent only over HTTP(S), not client JS
+      secure: false, // Ensures cookies are sent only over HTTPS
+    },
     resave: false,
     saveUninitialized: false,
     secret: process.env.SECRET_KEY,
@@ -25,7 +41,7 @@ mongoose
     console.log(err);
   });
 
-let PORT = 4000 || process.env.PORT;
+const PORT = 4000 || process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(require("cors")({ origin: "*" }));
@@ -34,6 +50,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(Admin.Account.createStrategy());
+
 passport.serializeUser((user, done) => {
   console.log("serializing user");
   done(null, { id: user.id, type: user.role });
@@ -53,18 +70,18 @@ passport.deserializeUser((obj, done) => {
     });
 });
 
-app.use("/", Router);
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  console.log(
-    "middleware",
-    req.session,
-    req.isAuthenticated(),
-    "Session token ",
-    req.session.token
-  );
-  return next();
-});
+app.use("/", router);
+// app.use((req, res, next) => {
+//   res.locals.currentUser = req.user;
+//   console.log(
+//     "middleware",
+//     req.session,
+//     req.isAuthenticated(),
+//     "Session token ",
+//     req.session.token
+//   );
+//   return next();
+// });
 app.listen(PORT, () => {
   console.log("Conneted to server at port " + PORT);
 });

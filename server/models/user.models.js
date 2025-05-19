@@ -32,11 +32,19 @@ const Admin = Account.discriminator("Admin", {});
 const User = Account.discriminator(
   "User",
   new mongoose.Schema({
-    order: { type: [], default: [] },
+    order: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+        default: [],
+      },
+    ],
+    address: { type: String, default: "" },
+    phoneNumber: { type: String, default: "" },
   })
 );
 const Moderator = Account.discriminator("Moderator", {});
 
 // const Admin = mongoose.model('Admin')
 
-module.exports = { Admin, Account, User };
+module.exports = { Admin, Account, User, Moderator };

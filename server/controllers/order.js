@@ -1,9 +1,9 @@
 const order = require("../models/order.models");
 const userModel = require("../models/user.models");
 
-function getOrder(req, res, next) {
+function getOrders(req, res, next) {
   order
-    .find({})
+    .find({ buyer: req.user.id })
     .then((orders) => {
       return res.status(200).json({
         orders,
@@ -19,19 +19,35 @@ function getOrder(req, res, next) {
     });
 }
 
-function userGetOrder(req, res, next) {
-  return res.status(200).json({
-    orders: req.user.order,
-    status: "success",
-    message: " order retrieved",
-  });
+function getOrderById(req, res, next) {
+  order
+    .find({ _id: req.params.id, buyer: req.user._id })
+    .then((order) => {
+      return res.status(200).json({
+        order,
+        status: "success",
+      });
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        status: "Failed",
+        error,
+        message: "Failed to get order",
+      });
+    });
 }
 
 function createOrder(req, res, next) {
   const newOrder = {
     productName: req.body.productName,
     price: req.body.price,
-    buyer: req.user,
+    buyer: req.user._id,
+    status: "pending",
+    address: req.body.address,
+    phoneNumber: req.body.phoneNumber,
+    paymentMethod: req.body.paymentMethod,
+    paymentStatus: req.body.paymentStatus,
+    createdAt: Date.now(),
   };
 
   order
@@ -68,94 +84,46 @@ function createOrder(req, res, next) {
     });
 }
 
-function updatedOrder(req, res, next) {
-  const orderId = req.orederId;
+function payOrder(req, res, next) {
+  const orderId = req.params.id;
+  const paymentMethod = req.body.paymentMethod;
+  const paymentStatus = req.body.paymentStatus;
   const updateData = {
-    delivered: req.body.delivered,
+    paymentMethod,
+    paymentStatus,
   };
-  if (req.user.role == "admin") {
-    order
-      .findByIdAndUpdate(orderId, updateData, { new: true })
-      .then((updatedOrder) => {
-        if (!updatedOrder) {
-          return res.status(404).json({
-            status: "fail",
-            message: "order not found",
-          });
-        }
 
-        return res.status(200).json({
-          status: "success",
-          message: "Order updated successfully",
-          order: updatedOrder,
-        });
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          status: "fail",
-          message: "Failed to update order",
-          error: err,
-        });
-      });
+  if (updateData.paymentMethod === "card") {
+    updateData.paymentStatus = "paid";
+  } else {
+    updateData.paymentStatus = "unpaid";
   }
-  userModel.Account.find({ order: orderId }).then((user) => {
-    if (req.user._id !== user.id) {
-      return res.status(500).json({
-        status: "fail",
-        message: "Failed to update order",
-        error: err,
-      });
-    }
-    order
-      .findByIdAndUpdate(orderId, updateData, { new: true })
-      .then((updatedOrder) => {
-        if (!updatedOrder) {
-          return res.status(404).json({
-            status: "fail",
-            message: "order not found",
-          });
-        }
-
-        return res.status(200).json({
-          status: "success",
-          message: "Order updated successfully",
-          order: updatedOrder,
-        });
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          status: "fail",
-          message: "Failed to update order",
-          error: err,
-        });
-      });
-  });
-}
-
-function deleteOrder(req, res) {
-  const uId = mongoose.Types.ObjectId.createFromHexString(req.query.id);
   order
-    .findByIdAndDelete(uId)
-    .then((deletedOrder) => {
+    .findByIdAndUpdate(orderId, updateData, { new: true })
+    .then((updatedOrder) => {
+      if (!updatedOrder) {
+        return res.status(404).json({
+          status: "fail",
+          message: "order not found",
+        });
+      }
       return res.status(200).json({
         status: "success",
-        message: `Order for "${deletedOrder.productName}" deleted successfully`,
-        redirect: "/signUp",
+        message: "Order updated successfully",
+        order: updatedOrder,
       });
     })
     .catch((err) => {
       return res.status(500).json({
         status: "fail",
-        message: `could not delete account`,
+        message: "Failed to update order",
         error: err,
       });
     });
 }
-
 module.exports = {
   createOrder,
-  deleteOrder,
-  getOrder,
-  updatedOrder,
-  userGetOrder,
+  getOrders,
+  getOrderById,
+  payOrder,
 };

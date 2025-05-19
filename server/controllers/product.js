@@ -9,45 +9,38 @@ let productHandler = async (req, res) => {
         data: allProducts
     })
 }
+// const b64 = Buffer.from(req.file.buffer).toString("base64");
+// let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
 function createProduct(req, res, next) {
-    const b64 = Buffer.from(req.file.buffer).toString("base64");
-    let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+  if (!req.file) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'No image file provided'
+    });
+  }
 
+  const newProduct = {
+    name: req.body.name,
+    price: req.body.price,
+    imageUrl: req.file.path  // multer-storage-cloudinary sets `file.path` to the secure URL
+  };
 
-    Cloudinary.uploader.upload(dataURI, { folder: 'vegetables' }, function (err, results) {
-        console.log(req.file);
-        if (err) {
-            return res.status(500).json({
-                status: "fail",
-                message: 'failed to upload image',
-                error: err
-            });
-        }
-        const newProduct = {
-            name: req.body.name,
-            price: req.body.price,
-            imageUrl: results.url
-        }
-
-
-        Product.create(newProduct)
-            .then((uploadedProduct) => {
-                res.status(201).json({
-                    status: "success",
-                    message: 'image uploaded successfully',
-                    product: uploadedProduct,
-                    data: results
-                });
-                return next();
-            }).catch((err) => {
-                return res.status(500).json({
-                    status: "fail",
-                    message: 'failed to create product',
-                    error: err
-                });
-            });
-
+  Product.create(newProduct)
+    .then(uploadedProduct => {
+      res.status(201).json({
+        status: 'success',
+        message: 'Product created with image on Cloudinary',
+        product: uploadedProduct
+      });
+      return next();
     })
+    .catch(err => {
+      res.status(500).json({
+        status: 'fail',
+        message: 'Failed to create product',
+        error: err
+      });
+    });
 }
 
 function updateProduct(req, res, next) {

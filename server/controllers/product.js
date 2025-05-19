@@ -1,4 +1,3 @@
-const { default: mongoose, get } = require("mongoose");
 const Product = require("../models/products.models");
 const cloudinary = require("../Utils/cloudinary");
 

@@ -31,8 +31,8 @@ router.put("/order/:id/pay", orderController.payOrder)
 // **************** */
 
 router.get("/cart", cartController.getCart);
-router.post("/cart/add", cartController.addToCart);
+router.post("/cart/:productId/add", cartController.addToCart);
 router.put("/cart/update", cartController.updateCart);
-router.delete("/cart/:id/remove", cartController.removeFromCart);
+router.delete("/cart/:productId/remove", cartController.removeFromCart);
 
 module.exports = router;

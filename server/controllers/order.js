@@ -57,12 +57,12 @@ function getOrderById(req, res, next) {
 
 function createOrder(req, res, next) {
   const newOrder = {
-    productName: req.body.productName,
+    product: req.body.productId,
     price: req.body.price,
     buyer: req.user._id,
     status: "pending",
-    address: req.body.address,
-    phoneNumber: req.body.phoneNumber,
+    address: req.body.address || req.user.address,
+    phoneNumber: req.body.phoneNumber || req.user.phoneNumber,
     paymentMethod: req.body.paymentMethod,
     paymentStatus: req.body.paymentStatus,
     createdAt: Date.now(),

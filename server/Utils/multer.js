@@ -1,14 +1,19 @@
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('./cloudinary');  // your configured Cloudinary instance
+const path = require('path');
 
 // configure multer-storage-cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'vegetables',
-    format: async (req, file) => file.mimetype.split('/')[1], // jpeg, png, etc
-    public_id: (req, file) => `${Date.now()}-${file.originalname}`,
+    //adds an extra file extention, hence it got commented
+    // format: async (req, file) => file.mimetype.split('/')[1], // jpeg, png, etc
+    public_id: (req, file) => {
+  const nameOnly = path.parse(file.originalname).name; // "Picture3"
+  return `${Date.now()}-${nameOnly}`;
+}
   },
 });
 

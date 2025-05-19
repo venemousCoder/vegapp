@@ -5,32 +5,44 @@ const adminControllers = require("../controllers/admin");
 const jwtAuth = require("../Utils/jwt");
 const upload = require("../Utils/multer");
 
-router.post("/cSUAD", adminControllers.createAdmin);
 //protected routes
 router.use(jwtAuth.adminVerifyJwt);
+router.get("/dashboard", adminControllers.adminDashboard);
+router.get("/logout", adminControllers.logout);
 
-// router.get("/orders", orderController.getOrder);
-// router.get("/dashboard", adminControllers.adminDashboard);
-// router.get("/logout", adminControllers.logout);
-// router.get("/delete", adminControllers.deleteAdmin);
-// router.post("/updateProduct", productControllers.updateProduct);
+// *********************** */
+//
+// ORDER ROUTES
+//
+// *********************** */
 
-// router.get("/orders", orderController.getOrder);
+router.get("/orders", orderController.getAllOrders);
+router.get("/orders/:id", orderController.getOrderById);
+router.put("/orders/:id/update", orderController.updateOrder);
+router.delete("/orders/:id/delete", orderController.deleteOrder);
 
-// router.get("/dashboard", adminControllers.adminDashboard);
+// *********************** */
+//
+// PRODUCT ROUTES
+//
+// *********************** */
 
-// router.get("/logout", adminControllers.logout);
+router.get("/products", productControllers.getProducts);
 
-// router.get("/delete", adminControllers.deleteAdmin);
+router.get("/products/:id", productControllers.getProductById);
 
-// router.post(
-//   "/uploadProduct",
-//   upload.single("file"),
-//   productControllers.createProduct
-// );
+router.post(
+  "/products/create",
+  upload.single("file"),
+  productControllers.createProduct
+);
 
-// router.post("/updateProduct", productControllers.updateProduct);
+router.put(
+  "/products/:id/update",
+  upload.single("file"),
+  productControllers.updateProduct
+);
 
-// router.post("/updateOrder", orderController.updatedOrder);
+router.delete("/products/:id/delete", productControllers.deleteProduct);
 
 module.exports = router;

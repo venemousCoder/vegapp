@@ -19,6 +19,24 @@ function getOrders(req, res, next) {
     });
 }
 
+function getAllOrders(req, res, next) {
+  order
+    .find({})
+    .then((orders) => {
+      return res.status(200).json({
+        orders,
+        status: "success",
+      });
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        status: "Failed",
+        error,
+        message: "Failed to get orders",
+      });
+    });
+}
+
 function getOrderById(req, res, next) {
   order
     .find({ _id: req.params.id, buyer: req.user._id })
@@ -116,14 +134,65 @@ function payOrder(req, res, next) {
     .catch((err) => {
       return res.status(500).json({
         status: "fail",
+        message: "Failed to update order for payment",
+        error: err,
+      });
+    });
+}
+
+function updateOrder(req, res, next) {
+  const orderId = req.params.id;
+  const updateData = {
+    delivered: req.body.delivered,
+  };
+  order
+    .findByIdAndUpdate(orderId, updateData, { new: true })
+    .then((updatedOrder) => {
+      if (!updatedOrder) {
+        return res.status(404).json({
+          status: "fail",
+          message: "order not found",
+        });
+      }
+      return res.status(200).json({
+        status: "success",
+        message: "Order updated successfully",
+        order: updatedOrder,
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        status: "fail",
         message: "Failed to update order",
         error: err,
       });
     });
 }
+
+function deleteOrder(req, res, next) {
+  const orderId = req.params.id;
+  order.findByIdAndDelete(orderId).then((deletedOrder) => {
+    if (!deletedOrder) {
+      return res.status(404).json({
+        status: "fail",
+        message: "order not found",
+        error: err,
+      });
+    }
+    return res.status(200).json({
+      status: "success",
+      message: "Order deleted successfully",
+      order: deletedOrder,
+    });
+  });
+}
+
 module.exports = {
   createOrder,
   getOrders,
+  getAllOrders,
   getOrderById,
   payOrder,
+  updateOrder,
+  deleteOrder,
 };

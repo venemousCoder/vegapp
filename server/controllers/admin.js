@@ -185,14 +185,7 @@ function updatedOrder(req, res, next) {
         });
       });
   }
-  userModel.Account.find({ order: orderId }).then((user) => {
-    if (req.user._id !== user.id) {
-      return res.status(500).json({
-        status: "fail",
-        message: "Failed to update order",
-        error: err,
-      });
-    }
+  userModels.Account.find({ order: orderId }).then((user) => {
     order
       .findByIdAndUpdate(orderId, updateData, { new: true })
       .then((updatedOrder) => {
@@ -227,7 +220,7 @@ function deleteOrder(req, res) {
       return res.status(200).json({
         status: "success",
         message: `Order for "${deletedOrder.productName}" deleted successfully`,
-        redirect: "/signUp",
+        redirect: "/orders",
       });
     })
     .catch((err) => {
@@ -251,9 +244,13 @@ module.exports = {
   test,
   deleteAdmin,
   logout,
-//   createProduct,
-//   updateProduct,
-//   deleteProduct,
+  // createProduct,
+  // updateProduct,
+  // deleteProduct,
+  // getProduct,
+  // getProducts,
+  // getOrder,
+  // getOrders,
   updatedOrder,
   deleteOrder,
   adminDashboard,

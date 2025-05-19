@@ -39,6 +39,13 @@ const User = Account.discriminator(
         default: [],
       },
     ],
+    cart: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cart",
+        default: [],
+      },
+    ],
     address: { type: String, default: "" },
     phoneNumber: { type: String, default: "" },
   })

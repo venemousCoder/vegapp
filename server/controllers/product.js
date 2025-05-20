@@ -75,7 +75,27 @@ function createProduct(req, res, next) {
 }
 
 function getProducts(req, res, next) {
-  Product.find()
+  if (req.query.q) {
+    const searchQuery = req.query.q;
+    console.log("SEARCH QUERY: ", searchQuery);
+    const regex = new RegExp(searchQuery, "i");
+    return Product.find({ name: regex })
+      .then((products) => {
+        return res.status(200).json({
+          status: "success",
+          message: "Products fetched successfully",
+          products: products,
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: "fail",
+          message: "Failed to fetch products",
+          error: err,
+        });
+      });
+  }
+  return Product.find()
     .then((products) => {
       return res.status(200).json({
         status: "success",
@@ -91,7 +111,6 @@ function getProducts(req, res, next) {
       });
     });
 }
-
 function getProductById(req, res, next) {
   const productId = req.params.id;
   Product.findById(productId)
@@ -218,26 +237,7 @@ function deleteProduct(req, res, next) {
     });
 }
 
-function searchProducts(req, res, next) {
-  const searchQuery = req.query.q;
-  const regex = new RegExp(searchQuery, "i");
-  Product.find({ name: regex }).then((products) => {
-    return res
-      .status(200)
-      .json({
-        status: "success",
-        message: "Products fetched successfully",
-        products: products,
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          status: "fail",
-          message: "Failed to fetch products",
-          error: err,
-        });
-      });
-  });
-}
+function searchProducts(req, res, next) {}
 
 module.exports = {
   createProduct,

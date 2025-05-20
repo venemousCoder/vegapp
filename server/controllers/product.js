@@ -74,39 +74,6 @@ function createProduct(req, res, next) {
     });
 }
 
-// function createProduct(req, res, next) {
-//   const newProduct = {
-//     productName: req.body.productName,
-//     productDescription: req.body.productDescription,
-//     productPrice: req.body.productPrice,
-//     productImage: req.body.productImage,
-//   };
-
-//   if (req.file) {
-//     if (req.file.mimetype.startsWith("image/")) {
-//       newRecipe.image = req.file.path; // Cloudinary URL
-//     }
-//   }
-
-//   const product = new Product.Product(newProduct);
-//   product
-//     .save()
-//     .then((savedProduct) => {
-//       return res.status(201).json({
-//         status: "success",
-//         message: "Product created successfully",
-//         product: savedProduct,
-//       });
-//     })
-//     .catch((err) => {
-//       return res.status(500).json({
-//         status: "fail",
-//         message: "Failed to create product",
-//         error: err,
-//       });
-//     });
-// }
-
 function getProducts(req, res, next) {
   Product.find()
     .then((products) => {
@@ -251,41 +218,26 @@ function deleteProduct(req, res, next) {
     });
 }
 
-// function updateProduct(req, res, next) {
-//     Product.findByIdAndUpdate({ id: req.body.id }, { name: req.body.name, price: req.body.price }, { new: true })
-//         .then((updatedProduct) => {
-//             res.status(200).json({
-//                 status: 'successful',
-//                 message: `Updated Product: ${updatedProduct.name}`
-//             })
-//             return next()
-//         }).catch((err) => {
-//             return res.status(500).json({
-//                 status: 'fail',
-//                 message: 'Could not update product',
-//                 error: err
-//             })
-//         });
-// }
-
-// function deleteProduct(req, res, next) {
-//     const productId = mongoose.Types.ObjectId.createFromHexString(req.query.productId);
-//     Product.findByIdAndDelete(productId)
-//         .then((deletedProduct) => {
-//             res.status(200).json({
-//                 status: 'success',
-//                 message: `deleted ${deletedProduct.name}`
-//             });
-//             return next();
-//         }).catch((err) => {
-//             return res.status(500).json({
-//                 status: "fail",
-//                 message: 'failed to delete product',
-//                 error: err
-//             });
-//         });
-
-// }
+function searchProducts(req, res, next) {
+  const searchQuery = req.query.q;
+  const regex = new RegExp(searchQuery, "i");
+  Product.find({ name: regex }).then((products) => {
+    return res
+      .status(200)
+      .json({
+        status: "success",
+        message: "Products fetched successfully",
+        products: products,
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: "fail",
+          message: "Failed to fetch products",
+          error: err,
+        });
+      });
+  });
+}
 
 module.exports = {
   createProduct,
@@ -293,4 +245,5 @@ module.exports = {
   deleteProduct,
   getProductById,
   getProducts,
+  searchProducts,
 };

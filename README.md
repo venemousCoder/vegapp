@@ -25,7 +25,9 @@ This document provides an overview of the API endpoints available in the Vegetab
 
 - **GET /products**: Get all products.
 - **GET /products/:id**: Get product by ID.
+- **POST /products?q=vegname**: Search products by name.
 - **GET /test**: Test endpoint.
+
 
 ### Order Management
 
@@ -34,6 +36,7 @@ This document provides an overview of the API endpoints available in the Vegetab
 - **POST /orders/create**: Create new order.
 - **PUT /orders/:id/pay**: Process order payment.
 - **PUT /orders/:id/deliver**: Update order deliver status.
+- **GET /orders/:id/cancel**: Cancel order.
 
 ### Cart Management
 

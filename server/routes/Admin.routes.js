@@ -20,6 +20,7 @@ router.get("/orders", orderController.getAllOrders);
 router.get("/orders/:id", orderController.getOrderById);
 router.put("/orders/:id/update", orderController.updateOrder);
 router.delete("/orders/:id/delete", orderController.deleteOrder);
+router.put("/orders/:id/delivered", orderController.deliveredOrder);
 
 // *********************** */
 //

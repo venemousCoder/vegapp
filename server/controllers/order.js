@@ -187,6 +187,37 @@ function deleteOrder(req, res, next) {
   });
 }
 
+function deliveredOrder(req, res, next) {
+  const orderId = req.params.id;
+  console.log(req.body.delivered);
+  const updateData = {
+    delivered: req.body.delivered,
+    deliveredAt: req.body.delivered === "true" ? Date.now() : null,
+  }; 
+  order
+    .findByIdAndUpdate(orderId, updateData, { new: true })
+    .then((updatedOrder) => {
+      if (!updatedOrder) {
+        return res.status(404).json({
+          status: "fail",
+          message: "order not found",
+        });
+      }
+      return res.status(200).json({
+        status: "success",
+        message: "Order updated successfully",
+        order: updatedOrder,
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        status: "fail",
+        message: "Failed to update order",
+        error: err,
+      });
+    });
+}
+
 module.exports = {
   createOrder,
   getOrders,
@@ -195,4 +226,5 @@ module.exports = {
   payOrder,
   updateOrder,
   deleteOrder,
+  deliveredOrder,
 };

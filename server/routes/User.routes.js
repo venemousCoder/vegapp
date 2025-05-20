@@ -21,7 +21,8 @@ router.get("/test", userController.test);
 router.get("/orders", orderController.getOrders);
 router.get("/orders/:id", orderController.getOrderById);
 router.post("/orders/create", orderController.createOrder);
-router.put("/orders/:id/pay", orderController.payOrder)
+router.put("/orders/:id/pay", orderController.payOrder);
+router.put("/orders/:id/delivered", orderController.deliveredOrder);
 
 
 // **************** */
